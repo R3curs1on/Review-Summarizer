@@ -1,0 +1,8 @@
+streamlit
+pyabsa
+requests
+transformers
+torch
+numpy
+selenium
+webdriver-manager
