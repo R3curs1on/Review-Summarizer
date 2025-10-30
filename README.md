@@ -15,13 +15,10 @@ This project scrapes reviews for a given product URL from Flipkart, analyzes the
     pip install -r requirements.txt
     ```
 
-3.  **Download Model Checkpoint**
-    The aspect extraction model must be downloaded manually. Download the `fast_lcf_atepc_English` model from the [PyABSA repository](httpshttps://github.com/yangheng95/pyabsa/blob/release/checkpoints/checkpoint_map.json) and place it in a folder named `PyABSA_Checkpoints_Local`.
-
-4.  **Add API Key**
+3.  **Add API Key**
     Open `app.py` and paste your Google Gemini API key into the `gemini_api_key` variable.
 
-5.  **Run the App**
+4.  **Run the App**
     ```bash
     streamlit run app.py
     ```
