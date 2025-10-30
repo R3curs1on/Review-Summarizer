@@ -1,27 +1,39 @@
 import json
 import os
-import warnings
-import logging
- 
 from pyabsa import ATEPCCheckpointManager as ATEPC
 
-# Update this path to your local checkpoint directory
-checkpoint_path = os.path.join(
-    os.getcwd(),
-    "PyABSA_Checkpoints_Local/fast_lcf_atepc_English_cdw_apcacc_82.36_apcf1_81.89_atef1_75.43"
-)
- 
+# Define the model to be used.
+# PyABSA will automatically download it if not found locally.
+model_name = 'fast_lcf_atepc_English'
+
+print(f"Loading aspect extractor model: '{model_name}'...")
+print("This may take a moment on the first run as the model is downloaded.")
+
+# Initialize the aspect extractor.
+# This will download the checkpoint from the web on the first run.
+# On subsequent runs, it will use the cached local version.
 aspect_extractor = ATEPC.get_aspect_extractor(
-    checkpoint=checkpoint_path,
-    auto_device=False,
-    device='cpu',
+    checkpoint=model_name,
+    auto_device=True,  # Automatically select CUDA if available, else CPU
     cal_perplexity=True
 )
 
+print("✅ Model loaded successfully.")
+
+
 def process_reviews_batch(reviews):
-    return aspect_extractor.predict(reviews, save_result=False, print_result=False)
+    """Processes a list of reviews to extract aspects and sentiments."""
+    return aspect_extractor.predict(
+        reviews,
+        save_result=False,
+        print_result=False
+    )
 
 def summarize_product_reviews(product_id, reviews):
+    """
+    Takes a product ID and a list of review texts, and returns a structured
+    JSON object with extracted aspects and their sentiments.
+    """
     raw_results = process_reviews_batch(reviews)
     product_summary = {"product_id": product_id, "reviews": []}
 
@@ -30,32 +42,42 @@ def summarize_product_reviews(product_id, reviews):
         sentiments = res.get("sentiment", []) or []
         confidences = res.get("confidence", []) or []
 
-        paired = []
-        for a, s, c in zip(aspects, sentiments, confidences):
+        paired_aspects = []
+        # Pair up each aspect with its corresponding sentiment and confidence
+        for aspect, sentiment, confidence in zip(aspects, sentiments, confidences):
             try:
-                conf_val = float(c)
-            except Exception:
+                # Ensure confidence is a float, handle potential errors
+                conf_val = float(confidence)
+            except (ValueError, TypeError):
                 conf_val = None
-            paired.append({
-                "term": a,
-                "sentiment": s,
+
+            paired_aspects.append({
+                "term": aspect,
+                "sentiment": sentiment,
                 "confidence": conf_val
             })
 
         product_summary["reviews"].append({
             "review": review_text,
-            "aspects": paired
+            "aspects": paired_aspects
         })
 
     return product_summary
 
+# Main block for testing the script independently
 if __name__ == "__main__":
     sample_reviews = [
         "the food was delicious and the service was excellent.",
         "horrible experience, the room was dirty and the staff were rude.",
         "average quality, nothing special but not bad either."
     ]
-    result = summarize_product_reviews(product_id="P-001", reviews=sample_reviews)
-    with open("product_reviews_summary.json", "w", encoding="utf-8") as f:
+    print("\n--- Running Test ---")
+    result = summarize_product_reviews(product_id="P-TEST-001", reviews=sample_reviews)
+
+    # Save the test result to a JSON file
+    output_filename = "product_reviews_summary.json"
+    with open(output_filename, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
+
+    print(f"Test complete. Output saved to '{output_filename}'.")
     print(json.dumps(result, indent=2, ensure_ascii=False))
