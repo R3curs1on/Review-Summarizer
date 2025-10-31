@@ -28,7 +28,7 @@ import requests
 import warnings
 
 # --- Gemini API Configuration ---
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent"
 
 # System prompt to guide the AI
 GEMINI_SYSTEM_PROMPT = """
@@ -40,21 +40,20 @@ Your response MUST be in this format:
 1.  A "Final Report" header.
 2.  An "Overall Summary" paragraph. This should be a synthesized, flowing paragraph (NOT a list) that
     naturally integrates the main themes, both good and bad.
-3.  A "What Users Liked" section. This should be 2-4 paragraphs that group similar positive
-    concepts (e.g., group 'bass' and 'base levels' together). Weave the review snippets
-    in as supporting quotes where appropriate. Do not just make a bulleted list.
-4.  A "What Users Disliked" section. This should be 1-3 paragraphs that group similar
-    negative concepts. Weave in review snippets as quotes. Do not just make a bulleted list.
+3.  A "What Users Liked" section. This should be 1-2 paragraphs that group similar positive
+    concepts.
+4.  A "What Users Disliked" section. This should be 1-2 paragraphs that group similar
+    negative concepts.
 
 RULES:
 -   **Be Natural:** Write in clear, engaging, and fluent language.
--   **Synthesize, Don't List:** Do not just list every aspect. Group them. For example,
-    'bass', 'buss', and 'base levels' should all be discussed under a general 'bass performance' theme.
--   **Use Quotes Sparingly:** Select only the *best* 1-2 quotes for each major theme to back up
-    your points. Do not include a quote for every single aspect.
+-   **Synthesize, Don't List:** Do not just list every aspect. Group them.
+-   **Use Quotes Sparingly:** Do not include a quote for every single aspect.
 -   **Be Contextual:** Use the provided snippets to understand *why* users liked or
     disliked something.
 -   **Use Markdown:** Use Markdown for formatting (e.g., ## Headers, **bold**).
+-   **NEW RULE: BE CONCISE. The entire report (from "Final Report" to the end)
+    MUST be a maximum of 300 words.**
 """
 
 # ====================================================================
@@ -140,7 +139,6 @@ def normalize_aspect(aspect):
     Groups similar aspect terms to avoid repetition for the AI.
     """
     term = aspect.lower().strip()
-    # Simplified grouping logic
     if "bass" in term or "buss" in term: return "Bass"
     if "sound" in term: return "Sound Quality"
     if "look" in term or "design" in term: return "Design & Look"
@@ -253,9 +251,8 @@ Please generate the human-readable report based on these findings.
     summary_text = call_gemini_api(api_key, GEMINI_SYSTEM_PROMPT, user_prompt)
 
     # Add a final header
-    final_report = f"\n\n\n" + "=" * 50
-    final_report += f"\n🤖 GEMINI-POWERED HUMAN-READABLE SUMMARY\n"
-    final_report += f"=" * 50 + "\n\n"
+    final_report = ""
+    final_report += f"\n LLM Based HUMAN-READABLE SUMMARY\n\n"
     final_report += summary_text
 
     return final_report
@@ -337,7 +334,7 @@ if __name__ == "__main__":
         exit()
 
     print("\n" + "=" * 50)
-    print("🎉 Success! Gemini report generated.")
+    print("🎉 Success! LLM  report generated.")
     print(f"Saved to: {report_path}")
     print("=" * 50)
     
