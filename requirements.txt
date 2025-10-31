@@ -1,8 +1,9 @@
-streamlit
-pyabsa
-requests
-transformers
-torch
-numpy
-selenium
-webdriver-manager
+streamlit~=1.51.0
+pyabsa~=2.4.2
+requests~=2.32.3
+transformers~=4.57.0
+torch~=2.9.0
+numpy~=2.2.6
+selenium~=4.23.1
+webdriver-manager~=4.0.2
+Flask~=3.1.2
