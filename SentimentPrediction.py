@@ -21,6 +21,7 @@ import os
 import json
 import numpy as np
 import torch
+import warnings
 from transformers import logging, BertTokenizer, BertModel
 
 # Suppress all Hugging Face and other library warnings
@@ -159,11 +160,17 @@ def encode_reviews_and_save(product_id, items, tokenizer, model, device, emb_dir
 
     return review_paths, product_path
 
-def analyze_product(product_summary, tokenizer, model, device, out_dir="./outputs"):
+def analyze_product(product_summary, out_dir="./outputs"):
     """
     Orchestrates classification + embeddings for a single product JSON.
     Returns the summary dict and writes it to ./outputs/{product_id}_sentiment.json
     """
+
+    model, tokenizer, device = load_bert_model_and_tokenizer()
+    if not model:
+        print("=============Failed to load embedding model for sentiment analysis.===========")
+        return None
+
     os.makedirs(out_dir, exist_ok=True)
     product_id = product_summary.get("product_id", "UNKNOWN")
     # 1. Process review data

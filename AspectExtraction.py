@@ -2,16 +2,14 @@ import json
 import os
 from pyabsa import ATEPCCheckpointManager as ATEPC
 
-# Define the model to be used.
-# PyABSA will automatically download it if not found locally.
-model_name = 'fast_lcf_atepc_English'
+# Define a valid, downloadable model. 'multilingual' is a robust choice for this task.
+model_name = 'multilingual'
 
 print(f"Loading aspect extractor model: '{model_name}'...")
 print("This may take a moment on the first run as the model is downloaded.")
 
 # Initialize the aspect extractor.
-# This will download the checkpoint from the web on the first run.
-# On subsequent runs, it will use the cached local version.
+# This will now successfully download the checkpoint from the web on the first run.
 aspect_extractor = ATEPC.get_aspect_extractor(
     checkpoint=model_name,
     auto_device=True,  # Automatically select CUDA if available, else CPU
@@ -19,7 +17,6 @@ aspect_extractor = ATEPC.get_aspect_extractor(
 )
 
 print("✅ Model loaded successfully.")
-
 
 def process_reviews_batch(reviews):
     """Processes a list of reviews to extract aspects and sentiments."""

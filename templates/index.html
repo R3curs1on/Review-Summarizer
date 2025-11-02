@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Review Summarizer — Clay UI (Lavender)</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <!-- FIX: Corrected path to be absolute from root -->
+  <link rel="stylesheet" href="/static/style.css" />
+
+  <!-- Marked.js - To render Markdown from Gemini -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- ====== Progress Loader Modal (hidden by default) ====== -->
+  <div class="progress-modal-overlay hidden" id="loader-overlay">
+    <div class="progress-modal clay-card-sm">
+      <div class="prog-title">Analyzing...</div>
+      <div id="prog-stage" class="prog-stage">Initializing pipeline...</div>
+    </div>
+  </div>
+
+  <!-- ====== NAVBAR (Sticky) ====== -->
+  <header class="nav-wrap">
+    <nav class="nav container">
+      <div class="brand">
+        <!-- FIX: Replaced broken placeholder URL with a working one -->
+        <img src="https://placehold.co/44x44/CBB7F0/FFFFFF?text=R" alt="Review Summarizer logo" class="logo" />
+        <div class="brand-text">
+          <div class="brand-title">Review Summarizer</div>
+          <div class="brand-sub">AI • Reviews • Insights</div>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#how">How it Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#insights">Insights</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ====== HERO ====== -->
+  <main>
+    <section id="hero" class="hero">
+      <!-- animated background blobs -->
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+
+      <div class="container hero-inner clay-card-lg">
+        <div class="hero-icon"> RS </div>
+        <h1 class="hero-title">Understand What People <span class="accent">Really Think</span></h1>
+        <p class="hero-sub">Paste any product link — we'll extract, analyze, and rewrite reviews intelligently into meaningful insights.</p>
+
+        <!-- Updated Form ID -->
+        <form class="hero-form" id="analyze-form">
+          <input id="productLink" type="url" placeholder="Paste product link here..." aria-label="Product link" required />
+          <button id="analyzeBtn" type="submit" class="btn-accent">Analyze</button>
+        </form>
+
+        <p class="hero-note">🔐 Secure • ⚡ Fast • 🎯 Accurate</p>
+      </div>
+    </section>
+
+    <!-- ====== HOW IT WORKS ====== -->
+    <section id="how" class="section how">
+      <div class="container">
+        <h2 class="section-title">How it Works</h2>
+        <p class="section-sub">Our intelligent pipeline transforms raw reviews into actionable insights.</p>
+
+        <div class="steps-grid">
+          <!-- (Steps are static, no changes needed) -->
+          <article class="step clay-card">
+            <div class="step-icon">🕸️</div>
+            <h3>Web Scraping</h3>
+            <p>Extract reviews from product pages automatically.</p>
+          </article>
+
+          <article class="step clay-card">
+            <div class="step-icon">🧩</div>
+            <h3>Aspect Extraction</h3>
+            <p>Identify the features and attributes being discussed.</p>
+          </article>
+
+          <article class="step clay-card">
+            <div class="step-icon">💬</div>
+            <h3>Sentiment Analysis</h3>
+            <p>Analyze opinions and emotional tone accurately.</p>
+          </article>
+
+          <article class="step clay-card">
+            <div class="step-icon">✍️</div>
+            <h3>Contextual Rewriting</h3>
+            <p>Generate clear, coherent summaries that capture key insights.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== INSIGHTS (DYNAMIC) ====== -->
+    <!-- FIX: Removed 'hidden' class so the section is always visible -->
+    <section id="insights" class="section insights">
+      <div class="container">
+        <h2 class="section-title">Dynamic Insights</h2>
+        <p class="section-sub">Here is the AI-powered analysis of the product reviews.</p>
+
+        <div class="insights-grid">
+
+          <!-- Card 1: Simple Summary (BART) -->
+          <div class="insight-card clay-card wide-card">
+            <h4>Simple Summary (BART)</h4>
+            <p id="simple-summary-text" class="muted">
+              <!-- Initial placeholder text -->
+              Click 'Analyze' to generate a simple summary of the reviews.
+            </p>
+            <button class="btn-ghost" id="copySummary">Copy Summary</button>
+          </div>
+
+          <!-- Card 2: Contextual Rewrite (LLM) -->
+          <div class="insight-card clay-card wide-card">
+            <h4>Contextual Rewrite (LLM)</h4>
+            <div id="contextual-report-html" class="muted">
+              <!-- Initial placeholder text -->
+              <p>Click 'Analyze' to generate a detailed, human-readable report.</p>
+            </div>
+            <button class="btn-ghost" id="downloadReport">Download Report</button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== FEATURES ====== -->
+    <section id="features" class="section features">
+      <div class="container">
+        <h2 class="section-title">Core Features</h2>
+        <p class="section-sub">Built with cutting-edge technology to deliver accurate results.</p>
+
+        <div class="features-row">
+          <div class="feature clay-card-sm">
+            <div class="feat-icon">🎯</div>
+            <h4>Accurate Extraction</h4>
+            <p class="muted">Collects reviews reliably from many pages.</p>
+          </div>
+
+          <div class="feature clay-card-sm">
+            <div class="feat-icon">⚡</div>
+            <h4>Smart Analysis</h4>
+            <p class="muted">Extracts aspects and sentiments precisely.</p>
+          </div>
+
+          <div class="feature clay-card-sm">
+            <div class="feat-icon">✨</div>
+            <h4>Contextual Rewriting</h4>
+            <p class="muted">Generates clear, resume-ready summaries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ABOUT ====== -->
+    <section id="about" class="section about">
+      <div class="container clay-card-lg about-card">
+        <div class="about-grid">
+          <div class="about-visual">
+            <div class="big-blob clay-card gradient"></div>
+          </div>
+          <div class="about-text">
+            <h2 class="section-title">Our Vision</h2>
+            <p class="muted">We aim to simplify decision-making by summarizing reviews into meaningful insights for everyone — from everyday consumers to brand strategists.</p>
+            <p class="muted">By leveraging advanced AI and natural language processing, we transform overwhelming amounts of customer feedback into clear, actionable intelligence.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== CONTACT ====== -->
+    <section id="contact" class="section contact">
+      <div class="container">
+        <div class="contact-card clay-card-lg">
+          <div class="contact-emoji">💌</div>
+          <h2 class="section-title">Get in Touch</h2>
+          <p class="muted">Have questions or suggestions? We'd love to hear from you.</p>
+
+          <div class="contact-info clay-inset">
+            <span class="mail">hello@reviewsummarizer.com</span>
+            <div class="socials">
+              <a class="social" href="#" aria-label="LinkedIn">in</a>
+              <a class="social" href="#" aria-label="Twitter">tw</a>
+              <a class="social" href="#" aria-label="GitHub">gh</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====== FOOTER (with Team) ====== -->
+  <footer class="footer">
+    <div class="container footer-inner gradient-pastel">
+      <p>© 2025 Review Summarizer</p>
+      <p>Built with ❤️ by <strong>Team C7</strong></p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <!-- FIX: Corrected path to be absolute from root -->
+  <script src="/static/script.js"></script>
+</body>
+</html>
